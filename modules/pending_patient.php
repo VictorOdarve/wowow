@@ -90,16 +90,18 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
-// Now fetch from both tables with proper JOIN to get all needed data
+// Now fetch from both tables with proper JOIN to get all needed data and check appointment status
 $sql = "SELECT 
     pp.*,
     COALESCE(cf.contact_no, '') as contact_no,
     COALESCE(cf.dob, '') as dob,
     COALESCE(cf.description, '') as description,
     COALESCE(cf.associated_symptoms, '') as associated_symptoms,
-    COALESCE(cf.email_address, '') as email_address
+    COALESCE(cf.email_address, '') as email_address,
+    CASE WHEN a.patient_id IS NOT NULL THEN 'Scheduled' ELSE 'Pending' END as status
 FROM pending_patient pp
 LEFT JOIN consultation_form cf ON pp.patient_id = cf.patient_id
+LEFT JOIN appointments a ON pp.patient_id = a.patient_id
 ORDER BY pp.patient_id DESC";
 $result = $conn->query($sql);
 ?>
@@ -191,8 +193,12 @@ $result = $conn->query($sql);
                           echo "</td>";
                           echo "<td>" . $row["date_started"] . "</td>";
                           echo "<td>";
-                          echo "<button class='btn btn-primary btn-sm' onclick='viewPatient(\"" . $row["patient_id"] . "\", \"" . addslashes($row["patient_name"]) . "\", \"" . ($row["dob"] ?? 'N/A') . "\", \"" . $row["age"] . "\", \"" . $row["gender"] . "\", \"" . addslashes(str_replace('_', ' ', $row["chief_complaint"])) . "\", \"" . addslashes($row["description"] ?? 'N/A') . "\", \"" . $row["date_started"] . "\", \"" . addslashes($row["severity"]) . "\", \"" . addslashes($row["associated_symptoms"] ?? 'N/A') . "\")'>View</button> ";
-                          echo "<button class='btn btn-success btn-sm' onclick='setSchedule(\"" . $row["patient_id"] . "\", \"" . addslashes($row["patient_name"]) . "\", \"" . addslashes(str_replace('_', ' ', $row["chief_complaint"])) . "\", \"" . addslashes($row["email_address"] ?? 'N/A') . "\", \"" . addslashes($row["description"] ?? 'N/A') . "\")'>Set Schedule</button>";
+                          if ($row["status"] == 'Scheduled') {
+                              echo "<span class='badge bg-info'>Scheduled</span>";
+                          } else {
+                              echo "<button class='btn btn-primary btn-sm' onclick='viewPatient(\"" . $row["patient_id"] . "\", \"" . addslashes($row["patient_name"]) . "\", \"" . ($row["dob"] ?? 'N/A') . "\", \"" . $row["age"] . "\", \"" . $row["gender"] . "\", \"" . addslashes(str_replace('_', ' ', $row["chief_complaint"])) . "\", \"" . addslashes($row["description"] ?? 'N/A') . "\", \"" . $row["date_started"] . "\", \"" . addslashes($row["severity"]) . "\", \"" . addslashes($row["associated_symptoms"] ?? 'N/A') . "\")'>View</button> ";
+                              echo "<button class='btn btn-success btn-sm' onclick='setSchedule(\"" . $row["patient_id"] . "\", \"" . addslashes($row["patient_name"]) . "\", \"" . addslashes(str_replace('_', ' ', $row["chief_complaint"])) . "\", \"" . addslashes($row["email_address"] ?? 'N/A') . "\", \"" . addslashes($row["description"] ?? 'N/A') . "\")'>Set Schedule</button>";
+                          }
                           echo "</td>";
                           echo "</tr>";
                       }

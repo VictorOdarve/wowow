@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_diagnosis'])) {
     $notes = $_POST['notes'];
     $treatment_plan = $_POST['treatment_plan'];
     $recommended_test = $_POST['recommended_test'];
-    $diagnosis_dateandtime = $_POST['diagnosis_date'] . ' ' . $_POST['diagnosis_time'];
+    $diagnosis_dateandtime = $_POST['diagnosis_dateandtime'];
     $doctor_nameorid = $_POST['doctor_nameorid'];
     
     $sql = "INSERT INTO patient_diagnosis (consultation_id, patient_id, diagnosis, clinical_findings, notes, treatment_plan, recommended_test, diagnosis_dateandtime, doctor_nameorid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iisssssss", $consultation_id, $patient_id, $diagnosis, $clinical_findings, $notes, $treatment_plan, $recommended_test, $diagnosis_dateandtime, $doctor_nameorid);
+    $stmt->bind_param("iissssss", $consultation_id, $patient_id, $diagnosis, $clinical_findings, $notes, $treatment_plan, $recommended_test, $diagnosis_dateandtime, $doctor_nameorid);
     
     if ($stmt->execute()) {
         echo "<script>alert('Diagnosis saved successfully!');</script>";
@@ -85,31 +85,27 @@ $result = $conn->query($sql);
               </div>
               <div class="col-12">
                 <label class="form-label">Clinical Findings</label>
-                <textarea class="form-control" name="clinical_findings" rows="3"></textarea>
+                <textarea class="form-control" name="clinical_findings" rows="3" required></textarea>
               </div>
               <div class="col-12">
                 <label class="form-label">Notes</label>
-                <textarea class="form-control" name="notes" rows="2"></textarea>
+                <textarea class="form-control" name="notes" rows="2" required></textarea>
               </div>
               <div class="col-12">
                 <label class="form-label">Treatment Plan</label>
-                <textarea class="form-control" name="treatment_plan" rows="3"></textarea>
+                <textarea class="form-control" name="treatment_plan" rows="3" required></textarea>
               </div>
               <div class="col-12">
                 <label class="form-label">Recommended Test</label>
-                <textarea class="form-control" name="recommended_test" rows="2" placeholder="List recommended tests or procedures"></textarea>
+                <textarea class="form-control" name="recommended_test" rows="2" required></textarea>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <label class="form-label">Doctor Name/ID</label>
                 <input type="text" class="form-control" name="doctor_nameorid" required>
               </div>
-              <div class="col-md-4">
-                <label class="form-label">Diagnosis Date</label>
-                <input type="date" class="form-control" name="diagnosis_date" value="<?php echo date('Y-m-d'); ?>" required>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Diagnosis Time</label>
-                <input type="time" class="form-control" name="diagnosis_time" value="<?php echo date('H:i'); ?>" required>
+              <div class="col-md-6">
+                <label class="form-label">Diagnosis Date & Time</label>
+                <input type="datetime-local" class="form-control" name="diagnosis_dateandtime" value="<?php echo date('Y-m-d\TH:i'); ?>" required>
               </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary">Save Diagnosis</button>

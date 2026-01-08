@@ -33,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_assessment'])) {
     $respiratory_rate = $_POST['respiratory_rate'];
     $weight = $_POST['weight'];
     $height = $_POST['height'];
-    $assessment_datetime = $_POST['assessment_date'] . ' ' . $_POST['assessment_time'];
+    $assessment_datetime = $_POST['assessment_datetime'];
     
     $sql = "INSERT INTO patient_assessment (patient_id, patient_name, blood_pressure, body_temp, pulse_rate, respiratory_rate, weight, height, assessment_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("issssssss", $patient_id, $patient_name, $blood_pressure, $body_temp, $pulse_rate, $respiratory_rate, $weight, $height, $assessment_datetime);
+    $stmt->bind_param("isssssss", $patient_id, $patient_name, $blood_pressure, $body_temp, $pulse_rate, $respiratory_rate, $weight, $height, $assessment_datetime);
     
     if ($stmt->execute()) {
         echo "<script>alert('Assessment saved successfully!');</script>";
@@ -72,47 +72,43 @@ $result = $conn->query($sql);
           
           <form method="POST" action="">
             <input type="hidden" name="save_assessment" value="1">
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Patient ID</label>
-                <input type="number" class="form-control" name="patient_id" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Patient Name</label>
-                <input type="text" class="form-control" name="patient_name" required>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Blood Pressure</label>
-                <input type="text" class="form-control" name="blood_pressure" placeholder="120/80">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Body Temperature (°C)</label>
-                <input type="text" class="form-control" name="body_temp" placeholder="36.5">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Pulse Rate</label>
-                <input type="text" class="form-control" name="pulse_rate" placeholder="72">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Respiratory Rate</label>
-                <input type="text" class="form-control" name="respiratory_rate" placeholder="16">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Weight (kg)</label>
-                <input type="text" class="form-control" name="weight" placeholder="70">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">Height (cm)</label>
-                <input type="text" class="form-control" name="height" placeholder="170">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Assessment Date</label>
-                <input type="date" class="form-control" name="assessment_date" value="<?php echo date('Y-m-d'); ?>" required>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Assessment Time</label>
-                <input type="time" class="form-control" name="assessment_time" value="<?php echo date('H:i'); ?>" required>
-              </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Patient ID</label>
+              <input type="number" class="form-control" name="patient_id" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Patient Name</label>
+              <input type="text" class="form-control" name="patient_name" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Blood Pressure</label>
+              <input type="text" class="form-control" name="blood_pressure" placeholder="120/80" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Body Temperature (°C)</label>
+              <input type="number" class="form-control" name="body_temp" step="0.1" placeholder="36.5" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Pulse Rate (bpm)</label>
+              <input type="number" class="form-control" name="pulse_rate" placeholder="72" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Respiratory Rate (per min)</label>
+              <input type="number" class="form-control" name="respiratory_rate" placeholder="16" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Weight (kg)</label>
+              <input type="number" class="form-control" name="weight" step="0.1" placeholder="70.5" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Height (cm)</label>
+              <input type="number" class="form-control" name="height" placeholder="170" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Assessment Date & Time</label>
+              <input type="datetime-local" class="form-control" name="assessment_datetime" value="<?php echo date('Y-m-d\TH:i'); ?>" required>
+            </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary">Save Assessment</button>
                 <button type="reset" class="btn btn-secondary">Reset</button>

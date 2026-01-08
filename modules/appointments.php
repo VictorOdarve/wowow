@@ -41,6 +41,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_status'])) {
         $stmt->bind_param("issdiidd", $patient_data['patient_id'], $patient_data['patient_name'], $_POST['blood_pressure'], $_POST['body_temp'], $_POST['pulse_rate'], $_POST['respiratory_rate'], $_POST['weight'], $_POST['height']);
         $stmt->execute();
         $stmt->close();
+    } elseif ($action == 'diagnosis') {
+        // Create diagnosis table if not exists
+        $create_diagnosis_table = "CREATE TABLE IF NOT EXISTS patient_diagnosis (
+            consultation_id INT,
+            patient_id INT,
+            diagnosis TEXT,
+            clinical_findings TEXT,
+            notes TEXT,
+            treatment_plan TEXT,
+            recommended_test TEXT,
+            diagnosis_dateandtime DATETIME,
+            doctor_nameorid VARCHAR(255),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        $conn->query($create_diagnosis_table);
+        
+        // Insert diagnosis data
+        $insert_diagnosis = "INSERT INTO patient_diagnosis (consultation_id, patient_id, diagnosis, clinical_findings, notes, treatment_plan, recommended_test, diagnosis_dateandtime, doctor_nameorid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($insert_diagnosis);
+        $consultation_id = $appointment_id; // Use appointment_id as consultation_id
+        $patient_id = $_POST['patient_id'];
+        $stmt->bind_param("iisssssss", $consultation_id, $patient_id, $_POST['diagnosis'], $_POST['clinical_findings'], $_POST['notes'], $_POST['treatment_plan'], $_POST['recommended_test'], $_POST['diagnosis_dateandtime'], $_POST['doctor_nameorid']);
+        $stmt->execute();
+        $stmt->close();
+    } elseif ($action == 'prescription') {
+        // Create prescription table if not exists
+        $create_prescription_table = "CREATE TABLE IF NOT EXISTS patient_prescription (
+            prescription_id INT AUTO_INCREMENT PRIMARY KEY,
+            patient_id INT,
+            consultation_id INT,
+            medication_name VARCHAR(255),
+            dosage VARCHAR(100),
+            frequency VARCHAR(100),
+            route VARCHAR(50),
+            duration VARCHAR(100),
+            additional_notes TEXT,
+            prescribing_doctor_nameorid VARCHAR(255),
+            prescription_datetime DATETIME,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        $conn->query($create_prescription_table);
+        
+        // Insert prescription data
+        $insert_prescription = "INSERT INTO patient_prescription (patient_id, consultation_id, medication_name, dosage, frequency, route, duration, additional_notes, prescribing_doctor_nameorid, prescription_datetime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($insert_prescription);
+        $consultation_id = $appointment_id;
+        $patient_id = $_POST['patient_id'];
+        $stmt->bind_param("iissssssss", $patient_id, $consultation_id, $_POST['medication_name'], $_POST['dosage'], $_POST['frequency'], $_POST['route'], $_POST['duration'], $_POST['additional_notes'], $_POST['prescribing_doctor_nameorid'], $_POST['prescription_datetime']);
+        $stmt->execute();
+        $stmt->close();
     }
     
     // Update the specific action status
@@ -237,9 +287,43 @@ $result = $conn->query($sql);
         <div class="modal-body">
           <input type="hidden" name="appointment_id" id="diagnosis_appointment_id">
           <input type="hidden" name="action" value="diagnosis">
-          <div class="mb-3">
-            <label class="form-label">Diagnosis</label>
-            <textarea class="form-control" name="diagnosis_notes" rows="4" required></textarea>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Consultation ID</label>
+              <input type="number" class="form-control" name="consultation_id" id="diagnosis_consultation_id" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Patient ID</label>
+              <input type="number" class="form-control" name="patient_id" id="diagnosis_patient_id" readonly>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Diagnosis</label>
+              <textarea class="form-control" name="diagnosis" rows="3" required></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Clinical Findings</label>
+              <textarea class="form-control" name="clinical_findings" rows="3" required></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" name="notes" rows="2" required></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Treatment Plan</label>
+              <textarea class="form-control" name="treatment_plan" rows="3" required></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Recommended Test</label>
+              <textarea class="form-control" name="recommended_test" rows="2" required></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Doctor Name/ID</label>
+              <input type="text" class="form-control" name="doctor_nameorid" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Diagnosis Date & Time</label>
+              <input type="datetime-local" class="form-control" name="diagnosis_dateandtime" required>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -263,9 +347,53 @@ $result = $conn->query($sql);
         <div class="modal-body">
           <input type="hidden" name="appointment_id" id="prescription_appointment_id">
           <input type="hidden" name="action" value="prescription">
-          <div class="mb-3">
-            <label class="form-label">Prescription</label>
-            <textarea class="form-control" name="prescription_notes" rows="4" required></textarea>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Patient ID</label>
+              <input type="number" class="form-control" name="patient_id" id="prescription_patient_id" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Consultation ID</label>
+              <input type="number" class="form-control" name="consultation_id" id="prescription_consultation_id" readonly>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Medication Name</label>
+              <input type="text" class="form-control" name="medication_name" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Dosage</label>
+              <input type="text" class="form-control" name="dosage" placeholder="500mg" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Frequency</label>
+              <input type="text" class="form-control" name="frequency" placeholder="3 times daily" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Route</label>
+              <select class="form-control" name="route" required>
+                <option value="">Select Route</option>
+                <option value="Oral">Oral</option>
+                <option value="Topical">Topical</option>
+                <option value="Injection">Injection</option>
+                <option value="Inhalation">Inhalation</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Duration</label>
+              <input type="text" class="form-control" name="duration" placeholder="7 days" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Additional Notes</label>
+              <textarea class="form-control" name="additional_notes" rows="2"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Prescribing Doctor Name/ID</label>
+              <input type="text" class="form-control" name="prescribing_doctor_nameorid" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Prescription Date & Time</label>
+              <input type="datetime-local" class="form-control" name="prescription_datetime" required>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -285,13 +413,27 @@ function showAssessmentForm(appointmentId) {
 }
 
 function showDiagnosisForm(appointmentId) {
-    document.getElementById('diagnosis_appointment_id').value = appointmentId;
-    new bootstrap.Modal(document.getElementById('diagnosisModal')).show();
+    // Get patient data from appointment
+    fetch('get_appointment_data.php?id=' + appointmentId)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('diagnosis_appointment_id').value = appointmentId;
+            document.getElementById('diagnosis_consultation_id').value = data.appointment_id;
+            document.getElementById('diagnosis_patient_id').value = data.patient_id;
+            new bootstrap.Modal(document.getElementById('diagnosisModal')).show();
+        });
 }
 
 function showPrescriptionForm(appointmentId) {
-    document.getElementById('prescription_appointment_id').value = appointmentId;
-    new bootstrap.Modal(document.getElementById('prescriptionModal')).show();
+    // Get patient data from appointment
+    fetch('get_appointment_data.php?id=' + appointmentId)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('prescription_appointment_id').value = appointmentId;
+            document.getElementById('prescription_consultation_id').value = data.appointment_id;
+            document.getElementById('prescription_patient_id').value = data.patient_id;
+            new bootstrap.Modal(document.getElementById('prescriptionModal')).show();
+        });
 }
 </script>
 

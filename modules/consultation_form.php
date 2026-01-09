@@ -24,7 +24,7 @@ $createTable = "CREATE TABLE IF NOT EXISTS consultation_form (
 ) AUTO_INCREMENT=1";
 $conn->query($createTable);
 
-require_once '../includes/header.php';
+require_once '../includes/consultation_header.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST)) {
     $fname = $_POST['first_name'];
@@ -302,6 +302,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST)) {
     });
 </script>
 
-<?php
-require_once '../includes/footer.php';
-?>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

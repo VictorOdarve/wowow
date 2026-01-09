@@ -1,5 +1,5 @@
 <?php
-// header.php
+// consultation_header.php
 if (!isset($page_title)) {
     $page_title = "MediCare Clinic";
 }
@@ -102,15 +102,6 @@ if (!isset($page_title)) {
             font-size: 18px;
         }
         
-        .badge-notification {
-            background: #dc3545;
-            color: white;
-            border-radius: 10px;
-            padding: 2px 8px;
-            font-size: 0.75rem;
-            margin-left: auto;
-        }
-        
         .quick-stats {
             padding: 20px;
             margin: 20px 15px;
@@ -132,12 +123,6 @@ if (!isset($page_title)) {
             font-size: 0.9rem;
         }
         
-        .doctor-profile {
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-        }
-        
         /* Main Content */
         .main-content {
             flex: 1;
@@ -148,15 +133,6 @@ if (!isset($page_title)) {
         
         .content-wrapper {
             padding: 30px;
-        }
-        
-        .dashboard-header {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border-left: 4px solid var(--primary-blue);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
         .form-container {
@@ -199,15 +175,6 @@ if (!isset($page_title)) {
             margin-bottom: 8px;
         }
         
-        .btn-custom {
-            background: var(--primary-blue);
-            border: none;
-            color: var(--white);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-        }
-        
         .btn-submit {
             background: var(--primary-blue);
             border: none;
@@ -227,59 +194,6 @@ if (!isset($page_title)) {
         .required::after {
             content: " *";
             color: #dc3545;
-        }
-        
-        .service-card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 25px;
-            height: 100%;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            transition: all 0.3s;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-color: var(--primary-blue);
-        }
-        
-        .service-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--pale-blue);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: var(--primary-blue);
-            margin-bottom: 20px;
-        }
-        
-        .stat-card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                position: relative;
-                height: auto;
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .content-wrapper {
-                padding: 15px;
-            }
         }
     </style>
 </head>
@@ -304,21 +218,6 @@ if (!isset($page_title)) {
                 <div class="nav-item">
                     <a href="appointments.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'appointments.php') ? 'active' : ''; ?>">
                         <i class="bi bi-calendar-check"></i> Appointments
-                        <?php
-                        // Count today's appointments
-                        if (isset($conn)) {
-                            $today_count = 0;
-                            $sql = "SELECT COUNT(*) as count FROM appointments WHERE schedule_date = CURDATE()";
-                            $result = @$conn->query($sql);
-                            if ($result && $result->num_rows > 0) {
-                                $row = $result->fetch_assoc();
-                                $today_count = $row['count'];
-                            }
-                            if ($today_count > 0): ?>
-                            <span class="badge-notification"><?php echo $today_count; ?></span>
-                            <?php endif;
-                        }
-                        ?>
                     </a>
                 </div>
                 
@@ -347,24 +246,24 @@ if (!isset($page_title)) {
                     
                     // Total Patients
                     $sql1 = "SELECT COUNT(*) as count FROM consultation_form";
-                    $result1 = @$conn->query($sql1);
-                    if ($result1 && $result1->num_rows > 0) {
+                    $result1 = $conn->query($sql1);
+                    if ($result1) {
                         $row1 = $result1->fetch_assoc();
                         $total_patients = $row1['count'];
                     }
                     
                     // Total Appointments
                     $sql2 = "SELECT COUNT(*) as count FROM appointments";
-                    $result2 = @$conn->query($sql2);
-                    if ($result2 && $result2->num_rows > 0) {
+                    $result2 = $conn->query($sql2);
+                    if ($result2) {
                         $row2 = $result2->fetch_assoc();
                         $total_appointments = $row2['count'];
                     }
                     
                     // Pending Cases - patients without appointments
                     $sql3 = "SELECT COUNT(*) as count FROM pending_patient pp LEFT JOIN appointments a ON pp.patient_id = a.patient_id WHERE a.patient_id IS NULL";
-                    $result3 = @$conn->query($sql3);
-                    if ($result3 && $result3->num_rows > 0) {
+                    $result3 = $conn->query($sql3);
+                    if ($result3) {
                         $row3 = $result3->fetch_assoc();
                         $pending_cases = $row3['count'];
                     }
@@ -384,8 +283,6 @@ if (!isset($page_title)) {
                     <strong class="text-warning"><?php echo $pending_cases; ?></strong>
                 </div>
             </div>
-            
-            <!-- Quick Stats Only -->
         </div>
         
         <!-- Main Content -->

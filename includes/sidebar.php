@@ -8,30 +8,17 @@
     
     <!-- Main Navigation -->
     <nav class="nav flex-column mt-4">
-        <a class="nav-link active" href="index.php">
-            <i class="bi bi-speedometer2"></i> Dashboard
-        </a>
-        
         <a class="nav-link" href="pending_patient.php">
             <i class="bi bi-person-plus"></i> New Consultation
         </a>
-        
+
         <a class="nav-link" href="appointments.php">
             <i class="bi bi-calendar-check"></i> Appointments
             <span class="badge bg-danger float-end mt-1">3</span>
         </a>
-        
+
         <a class="nav-link" href="consultation.php">
             <i class="bi bi-clipboard-data"></i> Consultation History
-        </a>
-        
-        
-        <a class="nav-link" href="patients.php">
-            <i class="bi bi-people"></i> All Patients
-        </a>
-        
-        <a class="nav-link" href="reports.php">
-            <i class="bi bi-bar-chart"></i> Reports
         </a>
     </nav>
     

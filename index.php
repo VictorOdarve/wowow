@@ -241,12 +241,6 @@ if ($conn->connect_error) {
 <!-- Navigation Menu -->
 <div class="nav-menu">
     <div class="nav-item">
-        <a href="index.php" class="nav-link active">
-            <i class="bi bi-speedometer2"></i> Dashboard
-        </a>
-    </div>
-    
-    <div class="nav-item">
         <a href="modules/consultation_form.php" class="nav-link">
             <i class="bi bi-person-plus"></i> New Consultation
         </a>
@@ -283,25 +277,6 @@ if ($conn->connect_error) {
         </a>
     </div>
 </div>
-                
-                <div class="nav-item">
-                    <a href="modules/consultation_history.php" class="nav-link">
-                        <i class="bi bi-clipboard-data"></i> Consultation History
-                    </a>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="modules/patients.php" class="nav-link">
-                        <i class="bi bi-people"></i> All Patients
-                    </a>
-                </div>
-                
-                <div class="nav-item">
-                    <a href="modules/reports.php" class="nav-link">
-                        <i class="bi bi-bar-chart"></i> Reports
-                    </a>
-                </div>
-            </div>
             
             <!-- Quick Stats -->
             <div class="quick-stats">
@@ -353,23 +328,8 @@ if ($conn->connect_error) {
                 </div>
             </div>
             
-            <!-- Doctor Profile -->
-            <div class="doctor-profile">
-                <div class="mb-3">
-                    <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center" 
-                         style="width: 50px; height: 50px;">
-                        <i class="bi bi-person-fill text-white" style="font-size: 24px;"></i>
-                    </div>
-                </div>
-                <div class="fw-bold">Dr. Sarah Johnson</div>
-                <small class="text-muted">General Practitioner</small>
-                <div class="mt-3">
-                    <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-box-arrow-right me-1"></i> Logout
-                    </button>
-                </div>
-            </div>
-        </div>
+            
+        
         
         <!-- Main Content -->
         <div class="main-content">
